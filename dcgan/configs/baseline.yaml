@@ -1,0 +1,23 @@
+# Baseline DCGAN configuration
+
+# Random seed for reproducibility
+seed: 42
+
+# Data parameters
+data_dir: "./data"
+
+# Model parameters
+latent_dim: 100  # Dimension of the generator's input noise vector
+ngf: 64          # Size of feature maps in generator
+ndf: 64          # Size of feature maps in discriminator
+
+# Training parameters
+n_epochs: 30     # Number of training epochs
+batch_size: 128  # Batch size during training
+lr: 0.0002       # Learning rate for Adam optimizer
+beta1: 0.5       # Beta1 hyperparameter for Adam optimizer
+
+# Output parameters
+sample_dir: "./logs/samples"   # Directory to save sample images
+model_dir: "./logs/models"     # Directory to save model checkpoints
+save_interval: 5               # Save models every N epochs

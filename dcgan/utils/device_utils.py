@@ -20,8 +20,7 @@ def get_device():
         # Print device properties
         device_properties = torch.cuda.get_device_properties(0)
         print(f"  GPU Device: {torch.cuda.get_device_name(0)}")
-        print(f"  CUDA Capability:
-              {device_properties.major}.{device_properties.minor}")
+        print(f"  CUDA Capability: {device_properties.major}.{device_properties.minor}")
         print(f"  Total Memory: {device_properties.total_memory / 1e9:.2f} GB")
     else:
         print("CUDA is not available. Using CPU.")

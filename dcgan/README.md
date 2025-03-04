@@ -7,16 +7,22 @@ This repository contains the implementation of a Deep Convolutional Generative A
 ```
 dcgan/
 ├── data/                  # Storage for MNIST dataset and preprocessed versions
-├── models/
-    └── baseline.py            # baseline DCGAN architecture
+├── models/                # DCGAN model architectures
+│   └── baseline.py        # Baseline DCGAN implementation
 ├── utils/                 # Helper functions
 │   ├── data_preprocessing.py  # Data loading and preprocessing
-│   └── device_utils.py        # GPU/CPU device selection utilities
-├── experiments/           # Experiment scripts (to be implemented)
+│   ├── device_utils.py        # GPU/CPU device selection utilities
+│   └── visualization.py       # Functions for visualizing outputs
+├── experiments/           # Experiment scripts
+│   └── baseline.py        # Baseline training script
+├── configs/               # Configuration files
+│   └── baseline.yaml      # Baseline model configuration
+├── logs/                  # Training logs and generated images
+│   ├── models/            # Saved model checkpoints
+│   └── samples/           # Generated sample images
 ├── docker-compose.yml     # Docker compose configuration
 ├── Dockerfile             # Docker configuration
 ├── requirements.txt       # Python dependencies
-├── SETUP_INSTRUCTIONS.md  # Detailed setup instructions
 └── README.md              # Project documentation
 ```
 
@@ -35,29 +41,50 @@ docker-compose exec dcgan bash
 
 # Inside the container, download and process the dataset
 python utils/data_preprocessing.py
+
+# Run the baseline DCGAN training
+python experiments/baseline.py
 ```
 
-See [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md) for detailed setup instructions, troubleshooting, and additional commands.
+## DCGAN Architecture
 
-## Dataset
+The implemented DCGAN follows the architecture guidelines from the original DCGAN paper:
 
-The project uses the MNIST dataset, which consists of 28x28 grayscale images of handwritten digits (0-9). The dataset is automatically downloaded and preprocessed when running the data preprocessing script.
+### Generator
+- Takes a random noise vector (latent_dim=100) and generates 28x28 grayscale images
+- Uses transposed convolutions for upsampling
+- BatchNorm in all layers except the output layer
+- ReLU activations in all layers except the output layer (Tanh)
+
+### Discriminator
+- Takes 28x28 grayscale images and outputs a probability of the image being real
+- Uses strided convolutions instead of pooling layers
+- BatchNorm in all layers except the first and last
+- LeakyReLU activations (alpha=0.2)
+- Sigmoid activation in the output layer
 
 ## Experiment Tracking
 
-This project uses Weights & Biases (WandB) for experiment tracking. Before running experiments, set up your WandB account and login inside the Docker container:
+This project uses Weights & Biases (WandB) for experiment tracking. Before running experiments, you need to set up your WandB account and login inside the Docker container:
 
 ```bash
 wandb login
 ```
 
+The training script logs:
+- Generator and discriminator losses
+- Generated image samples
+- Model gradients and parameters
+- Hyperparameters
+
 ## Experiments
 
 The project includes the following experiments:
 
-1. **Architecture Variations**: Modifications to the DCGAN architecture
-2. **Hyperparameter Tuning**: Experimenting with learning rates, batch sizes, etc.
-3. **Precision Changes**: Tests with different floating-point precisions
+1. **Baseline DCGAN**: Standard implementation following the original paper
+2. **Architecture Variations**: (To be implemented)
+3. **Hyperparameter Tuning**: (To be implemented)
+4. **Precision Changes**: (To be implemented)
 
 ## License
 
