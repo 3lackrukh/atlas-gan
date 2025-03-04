@@ -76,3 +76,67 @@ class Generator(nn.Module):
         # Center crop from 32 x 32 to 28 x 28 to match MNIST dims
         img = img[:, :, 2:30, 2:30]
         return img
+
+
+class Discriminator(nn.Module):
+    """
+    DCGAN Discriminator Network
+
+    Determines whether an image is real or fake
+    """
+    def __init__(self, ndf=64):
+        """
+        Initialize the Discriminator
+
+        Args:
+            ndf (int): Size of feature maps in discriminator
+        """
+        super(Discriminator, self).__init__()
+
+        self.main = nn.Sequential(
+            # Input is 1 x 28 x 28
+            # No BatchNorm on first layer (DCGAN paper)
+            nn.Conv2d(1, ndf, 4, 2, 1, bias=False),
+            nn.LeakyReLU(0.2, inplace=True),
+            # Size: ndf x 14 x 14
+
+            nn.Conv2d(ndf, ndf * 2, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(ndf * 2),
+            nn.LeakyReLU(0.2, inplace=True),
+            # Size: (ndf*2) x 7 x 7
+
+            nn.Conv2d(ndf * 2, ndf * 4, 4, 2, 1, bias=False),
+            nn.BatchNorm2d(ndf * 4),
+            nn.LeakyReLU(0.2, inplace=True),
+            # Size: (ndf*4) x 3 x 3
+
+            # Final layer - output is 1-dimensional score
+            nn.Conv2d(ndf * 4, 1, 3, 1, 0, bias=False),
+            nn.Sigmoid()
+            # Size: 1 x 1 x 1
+        )
+
+        # Initialize weights with mean=0, std=0.02
+        self.apply(self._init_weights)
+
+    def _init_weights(self, module):
+        """Initialize weights according to DCGAN paper"""
+        classname = module.__class__.__name__
+        if classname.find('Conv') != -1:
+            nn.init.normal_(module.weight.data, 0.0, 0.02)
+        elif classname.find('BatchNorm') != -1:
+            nn.init.normal_(module.weight.data, 1.0, 0.02)
+            nn.init.constant_(module.bias.data, 0)
+
+    def forward(self, img):
+        """
+        Forward pass
+
+        Args:
+            img (torch.Tensor): Input image of shape (batch_size, 1, 28, 28)
+
+        Returns:
+            torch.Tensor: Probability that image is real
+        """
+        validity = self.main(img)
+        return validity.view(-1, 1).squeeze(1)
