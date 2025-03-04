@@ -7,7 +7,8 @@ This repository contains the implementation of a Deep Convolutional Generative A
 ```
 dcgan/
 ├── data/                  # Storage for MNIST dataset and preprocessed versions
-├── models/                # DCGAN model architectures (to be implemented)
+├── models/
+    └── baseline.py            # baseline DCGAN architecture
 ├── utils/                 # Helper functions
 │   ├── data_preprocessing.py  # Data loading and preprocessing
 │   └── device_utils.py        # GPU/CPU device selection utilities
